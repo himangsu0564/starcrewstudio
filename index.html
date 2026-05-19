@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Starcrew Studios | Creative Digital Hub</title>
+    <title>Dark Group Studios | Creative Digital Hub</title>
     <style>
         /* --- GLOBAL ROOT VARIABLES --- */
         :root {
@@ -486,8 +486,8 @@
     <header>
         <div class="nav-container">
             <a href="#" class="logo-area">
-                <img src="starcrew_logo.jpg" alt="Starcrew Studios Logo" class="logo-img">
-                <span class="logo-text">Starcrew Studios</span>
+                <img src="starcrew_logo.jpg" alt="Dark Group Studios Logo" class="logo-img">
+                <span class="logo-text">Dark Group Studios</span>
             </a>
             <nav>
                 <ul>
@@ -501,9 +501,9 @@
 
     <section class="hero" id="home">
         <div class="hero-content">
-            <img src="starcrew_logo.jpg" alt="Starcrew Studios Logo" class="hero-logo-large">
+            <img src="starcrew_logo.jpg" alt="Dark Group Studios Logo" class="hero-logo-large">
             <h1>Creative Digital Studio</h1>
-            <p>Starcrew Studios builds modern websites, edits videos, creates digital content, develops online experiences, and helps brands stand out with creative design.</p>
+            <p>Dark Group Studios builds modern websites, edits videos, creates digital content, develops online experiences, and helps brands stand out with creative design.</p>
             <div class="btn-group">
                 <a href="#services" class="btn btn-primary">Explore Services</a>
                 <a href="https://discord.gg/4b2VUwZhr2" target="_blank" class="btn btn-discord">Join Our Discord</a>
@@ -542,13 +542,13 @@
 
     <section id="about">
         <div class="section-header">
-            <h2 class="section-title">About Starcrew Studios</h2>
+            <h2 class="section-title">About Dark Group Studios</h2>
         </div>
         
         <div class="about-layout">
             <div class="about-text">
                 <p>We are a creative studio focused on building modern digital experiences. Our goal is to combine creativity, technology, and design into something unique and professional.</p>
-                <p>Whether it is websites, edits, branding, or digital content, Starcrew Studios delivers high-quality work with a modern aesthetic.</p>
+                <p>Whether it is websites, edits, branding, or digital content, Dark Group Studios delivers high-quality work with a modern aesthetic.</p>
             </div>
             
             <div class="stats-row">
@@ -577,7 +577,7 @@
             <form id="discordOrderForm">
                 <div class="form-group">
                     <label for="discordUser">Discord Username</label>
-                    <input type="text" id="discordUser" placeholder="e.g., starcrew_dev" required>
+                    <input type="text" id="discordUser" placeholder="e.g., darkgroup_dev" required>
                 </div>
                 <div class="form-group">
                     <label for="discordEmail">Email Address</label>
@@ -605,7 +605,7 @@
             <form id="webOrderForm">
                 <div class="form-group">
                     <label for="webDiscordUser">Discord Username</label>
-                    <input type="text" id="webDiscordUser" placeholder="e.g., starcrew_dev" required>
+                    <input type="text" id="webDiscordUser" placeholder="e.g., darkgroup_dev" required>
                 </div>
                 <div class="form-group">
                     <label for="webEmail">Email Address</label>
@@ -633,7 +633,7 @@
             <form id="videoOrderForm">
                 <div class="form-group">
                     <label for="videoContact">Discord Username</label>
-                    <input type="text" id="videoContact" placeholder="e.g., starcrew_dev" required>
+                    <input type="text" id="videoContact" placeholder="e.g., darkgroup_dev" required>
                 </div>
                 <div class="form-group">
                     <label for="videoEmail">Email Address</label>
@@ -653,7 +653,7 @@
     </div>
 
     <footer>
-        <p>&copy; 2026 Starcrew Studios. All Rights Reserved.</p>
+        <p>&copy; 2026 Dark Group Studios. All Rights Reserved.</p>
     </footer>
 
     <script type="module">
@@ -672,23 +672,41 @@
 
         // Constants for EmailJS triggers
         const EMAILJS_SERVICE_ID = "service_56ffj0d"; 
-        const EMAILJS_TEMPLATE_ID = "template_b58nvrh"; 
+        const CLIENT_TEMPLATE_ID = "template_b58nvrh";  // Auto-Reply to Client
+        const ADMIN_TEMPLATE_ID = "template_7q2x9t8";   // New Order Alert to Admin
 
-        // Helper function to send automated receipt notification emails
-        function sendConfirmationEmail(email, discord, type, details) {
-            const templateParams = {
-                // Option 1 map: keeping this as 'email' to cleanly interface with your updated EmailJS panel!
+        // Function to dispatch automated notification emails to both client and admin
+        function sendNotificationEmails(email, discord, type, details) {
+            // Parameters for the Client confirmation copy
+            const clientParams = {
                 email: email, 
                 contact_method: `Discord: ${discord} | Email: ${email}`,
                 request_type: type,
                 request_details: details
             };
 
-            emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+            // Parameters mapping cleanly into your new Admin Notification dashboard
+            const adminParams = {
+                request_type: type,
+                discord_user: discord,
+                client_email: email,
+                request_details: details
+            };
+
+            // Trigger Client Auto-Reply Email
+            emailjs.send(EMAILJS_SERVICE_ID, CLIENT_TEMPLATE_ID, clientParams)
                 .then(() => {
-                    console.log("Confirmation email dispatched securely from starcrew.studio@gmail.com!");
+                    console.log("Client confirmation email dispatched successfully.");
                 }, (error) => {
-                    console.error("EmailJS tracking dispatch fault: ", error);
+                    console.error("Client email tracking dispatch fault: ", error);
+                });
+
+            // Trigger Admin Order Alert Email
+            emailjs.send(EMAILJS_SERVICE_ID, ADMIN_TEMPLATE_ID, adminParams)
+                .then(() => {
+                    console.log("Admin order notification alert dropped into your inbox!");
+                }, (error) => {
+                    console.error("Admin alert routing dispatch fault: ", error);
                 });
         }
 
@@ -745,7 +763,7 @@
                     submittedAt: new Date()
                 });
 
-                sendConfirmationEmail(email, discord, "Discord Server Setup", `Purpose: ${purpose}. Extra details: ${details}`);
+                sendNotificationEmails(email, discord, "Discord Server Setup", `Purpose: ${purpose}. Extra details: ${details}`);
 
                 alert('Form successfully submitted! A receipt confirmation has been sent to ' + email);
                 orderForm.reset();
@@ -779,7 +797,7 @@
                     submittedAt: new Date()
                 });
 
-                sendConfirmationEmail(email, discord, "Website Design Order", `Scale/Budget: ${budget}. Requirements: ${desc}`);
+                sendNotificationEmails(email, discord, "Website Design Order", `Scale/Budget: ${budget}. Requirements: ${desc}`);
 
                 alert('Website order submitted! A receipt confirmation has been sent to ' + email);
                 webOrderForm.reset();
@@ -818,7 +836,7 @@
                     submittedAt: new Date()
                 });
 
-                sendConfirmationEmail(email, discord, "Video Editing Request", `Vision/Style: ${style}. File Link: ${videoDownloadUrl}`);
+                sendNotificationEmails(email, discord, "Video Editing Request", `Vision/Style: ${style}. File Link: ${videoDownloadUrl}`);
 
                 alert('Video edit request logged! A receipt confirmation has been sent to ' + email);
                 videoOrderForm.reset();

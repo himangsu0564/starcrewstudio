@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Starcrew Studios | Creative Digital Hub</title>
+    
+    <link rel="icon" type="image/jpeg" href="starcrew_logo.jpg">
+    
     <style>
         /* --- GLOBAL ROOT VARIABLES --- */
         :root {
@@ -481,7 +484,6 @@
             max-width: 420px;
             pointer-events: auto;
             
-            /* Hidden by default, animating outwards right */
             transform: translateX(120%);
             opacity: 0;
             transition: all 0.45s cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -492,7 +494,6 @@
             opacity: 1;
         }
 
-        /* Error/Failure state dynamic modifications */
         .toast-card.toast-error {
             border-left: 4px solid #ff4a4a;
         }
@@ -751,24 +752,18 @@
             projectId: "starcrew-login"
         };
 
-        // Initialize App & Firestore
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Constants for EmailJS triggers
         const EMAILJS_SERVICE_ID = "service_56ffj0d"; 
-        const CLIENT_TEMPLATE_ID = "template_b58nvrh";  // Auto-Reply to Client
-        const ADMIN_TEMPLATE_ID = "template_7q2x9t8";   // New Order Alert to Admin
+        const CLIENT_TEMPLATE_ID = "template_b58nvrh";  
+        const ADMIN_TEMPLATE_ID = "template_7q2x9t8";   
 
-        // --- NEW TOAST INJECTOR ENGINE ---
         function showToast(title, description, isError = false) {
             const container = document.getElementById('toastContainer');
-            
-            // Create the card element dynamically
             const card = document.createElement('div');
             card.className = `toast-card ${isError ? 'toast-error' : ''}`;
             
-            // Set up inner custom structure
             card.innerHTML = `
                 <div class="toast-icon">${isError ? '✕' : '✓'}</div>
                 <div class="toast-message">
@@ -778,16 +773,10 @@
                 <button class="toast-close-btn">&times;</button>
             `;
             
-            // Append card directly into the fixed viewport container
             container.appendChild(card);
-            
-            // Trigger animation frame slip to slide-in from right margin
             setTimeout(() => card.classList.add('active'), 50);
-            
-            // Auto dismissal handler after a 4-second delay execution
             const autoDismissTimer = setTimeout(() => dismissToast(card), 4000);
             
-            // Close card immediately on cross-icon interaction click
             card.querySelector('.toast-close-btn').addEventListener('click', () => {
                 clearTimeout(autoDismissTimer);
                 dismissToast(card);
@@ -796,13 +785,10 @@
 
         function dismissToast(card) {
             card.classList.remove('active');
-            // Remove the card completely from the DOM space once slide-out transition finishes
             card.addEventListener('transitionend', () => card.remove());
         }
 
-        // Function to dispatch automated notification emails to both client and admin
         function sendNotificationEmails(email, discord, type, details) {
-            // Parameters for the Client confirmation copy
             const clientParams = {
                 email: email, 
                 contact_method: `Discord: ${discord} | Email: ${email}`,
@@ -810,7 +796,6 @@
                 request_details: details
             };
 
-            // Parameters mapping cleanly into your Admin Notification dashboard
             const adminParams = {
                 request_type: type,
                 discord_user: discord,
@@ -818,7 +803,6 @@
                 request_details: details
             };
 
-            // Trigger Client Auto-Reply Email
             emailjs.send(EMAILJS_SERVICE_ID, CLIENT_TEMPLATE_ID, clientParams)
                 .then(() => {
                     console.log("Client confirmation email dispatched successfully.");
@@ -826,7 +810,6 @@
                     console.error("Client email tracking dispatch fault: ", error);
                 });
 
-            // Trigger Admin Order Alert Email
             emailjs.send(EMAILJS_SERVICE_ID, ADMIN_TEMPLATE_ID, adminParams)
                 .then(() => {
                     console.log("Admin order notification alert dropped into your inbox!");
@@ -835,7 +818,6 @@
                 });
         }
 
-        // --- FORM DISPLAY INTERFACES ---
         const discordCard = document.getElementById('discord-card');
         const formModal = document.getElementById('formModal');
         const closeBtn = document.getElementById('closeBtn');
@@ -854,7 +836,6 @@
         const videoOrderForm = document.getElementById('videoOrderForm');
         const videoSubmitBtn = document.getElementById('videoSubmitBtn');
 
-        // Modal Open/Close Controls
         discordCard.addEventListener('click', () => formModal.classList.add('active'));
         closeBtn.addEventListener('click', () => formModal.classList.remove('active'));
         formModal.addEventListener('click', (e) => { if(e.target === formModal) formModal.classList.remove('active'); });
@@ -867,8 +848,6 @@
         videoCloseBtn.addEventListener('click', () => videoModal.classList.remove('active'));
         videoModal.addEventListener('click', (e) => { if(e.target === videoModal) videoModal.classList.remove('active'); });
 
-
-        // Pipeline 1: Discord Server Requests
         orderForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const discord = document.getElementById('discordUser').value;
@@ -889,10 +868,7 @@
                 });
 
                 sendNotificationEmails(email, discord, "Discord Server Setup", `Purpose: ${purpose}. Extra details: ${details}`);
-
-                // Replaced alert() with clean modern toast notification UI
                 showToast("Request Submitted!", `Confirmation details sent to ${email}`);
-                
                 orderForm.reset();
                 formModal.classList.remove('active');
             } catch (error) {
@@ -904,7 +880,6 @@
             }
         });
 
-        // Pipeline 2: Website Design Requests
         webOrderForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const discord = document.getElementById('webDiscordUser').value;
@@ -925,10 +900,7 @@
                 });
 
                 sendNotificationEmails(email, discord, "Website Design Order", `Scale/Budget: ${budget}. Requirements: ${desc}`);
-
-                // Replaced alert() with clean modern toast notification UI
                 showToast("Website Order Logged!", `Receipt copy route dispatched to ${email}`);
-
                 webOrderForm.reset();
                 webModal.classList.remove('active');
             } catch (error) {
@@ -940,7 +912,6 @@
             }
         });
 
-        // Pipeline 3: Video Editing Upload Requests
         videoOrderForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const discord = document.getElementById('videoContact').value;
@@ -966,10 +937,7 @@
                 });
 
                 sendNotificationEmails(email, discord, "Video Editing Request", `Vision/Style: ${style}. File Link: ${videoDownloadUrl}`);
-
-                // Replaced alert() with clean modern toast notification UI
                 showToast("Video Request Processed!", `Automated tracking dispatch sent to ${email}`);
-
                 videoOrderForm.reset();
                 
                 const widgetInstance = uploadcare.Widget('#videoFile');
